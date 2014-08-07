@@ -11,7 +11,7 @@ import flaxbeard.steamcraft.api.tile.SteamTransporterTileEntity;
 public class TileEntityBlockPlacer extends SteamTransporterTileEntity implements IInventory{
 	
 	private ItemStack[] inventory = new ItemStack[1];
-	int ticks = 0;
+	int tick = 0;
 	
 	@Override
 	public int getSizeInventory() {
@@ -90,6 +90,19 @@ public class TileEntityBlockPlacer extends SteamTransporterTileEntity implements
 			}
 		}
 		return false;
+	}
+	
+	private boolean hasItem(){
+		if (this.getStackInSlot(0) != null){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void updateEntity(){
+		super.updateEntity();
+		if (tick == 0 && )
 	}
 	
 	
