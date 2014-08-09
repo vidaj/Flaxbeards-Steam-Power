@@ -38,6 +38,7 @@ import flaxbeard.steamcraft.handler.SteamcraftTickHandler;
 import flaxbeard.steamcraft.integration.BotaniaIntegration;
 import flaxbeard.steamcraft.integration.ThaumcraftIntegration;
 import flaxbeard.steamcraft.item.ItemSmashedOre;
+import flaxbeard.steamcraft.tile.TileEntityBlockPlacer;
 import flaxbeard.steamcraft.tile.TileEntityBoiler;
 import flaxbeard.steamcraft.tile.TileEntityCreativeTank;
 import flaxbeard.steamcraft.tile.TileEntityCrucible;
@@ -74,7 +75,7 @@ public class Steamcraft {
     @Instance("Steamcraft")
     public static Steamcraft instance;
     
-    public static SPLog log = SPLog.getInstance().setLogLevel(SPLog.NONE);
+    public static SPLog log = SPLog.getInstance().setLogLevel(SPLog.DEBUG);
     
     public static FMLEventChannel channel;
     
@@ -123,6 +124,7 @@ public class Steamcraft {
 	  //  EntityRegistry.registerModEntity(EntitySteamHorse.class, "SteamHorse", 2, Steamcraft.instance, 64, 1, true);
 	    //EntityList.addMapping(EntitySteamHorse.class, "SteamHorse", 5, 0xE2B23E, 0xB38E2F);
 
+	    GameRegistry.registerTileEntity(TileEntityBlockPlacer.class, "steamcraftBlockPlacer");
 		GameRegistry.registerTileEntity(TileEntityCrucible.class, "steamcraftCrucible");
 		GameRegistry.registerTileEntity(TileEntityMold.class, "mold");
 		GameRegistry.registerTileEntity(TileEntityBoiler.class, "boiler");

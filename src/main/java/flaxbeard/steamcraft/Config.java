@@ -21,6 +21,7 @@ public class Config {
 	public static int villagerId;
 	
 	// blocks
+	public static boolean enableBlockPlacer;
 	public static boolean enableBoiler;
 	public static boolean enableCharger;
 	public static boolean enableCrucible;
@@ -63,6 +64,7 @@ public class Config {
 	public static boolean hasAllCrucial;
 	
 	
+	
 	public static void load(FMLPreInitializationEvent event) {
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -99,6 +101,7 @@ public class Config {
 		
 		
 		// BLOCKS
+		enableBlockPlacer = config.get("Blocks", "Enable block placer", true).getBoolean(true);
 		enableCharger = config.get("Blocks", "Enable steam filler", true).getBoolean(true);
 		enableCrucible = config.get("Blocks", "Enable crucible", true).getBoolean(true);
 		enableEngineering = config.get("Blocks", "Enable engineering table", true).getBoolean(true);

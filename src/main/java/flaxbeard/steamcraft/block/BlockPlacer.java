@@ -31,6 +31,13 @@ public class BlockPlacer extends BlockSteamTransporter implements IWrenchable {
 	public TileEntity createNewTileEntity(World world, int someInt) {
 		return new TileEntityBlockPlacer();
 	}
+	
+	public boolean isOpaqueCube()
+    {
+        return false;
+    }
+	
+	
 
 	public IIcon getIcon(int side, int meta)
     {

@@ -17,6 +17,7 @@ import flaxbeard.steamcraft.block.BlockFluidSteamConverter;
 import flaxbeard.steamcraft.block.BlockItemMortar;
 import flaxbeard.steamcraft.block.BlockMold;
 import flaxbeard.steamcraft.block.BlockPipe;
+import flaxbeard.steamcraft.block.BlockPlacer;
 import flaxbeard.steamcraft.block.BlockPump;
 import flaxbeard.steamcraft.block.BlockRuptureDisc;
 import flaxbeard.steamcraft.block.BlockSmasher;
@@ -54,6 +55,7 @@ public class SteamcraftBlocks {
 	public static Block carving;
 	
 	// steam net
+	public static Block blockPlacer;
 	public static Block boiler;
 	public static Block boilerOn;
 	public static Block flashBoiler;
@@ -180,6 +182,11 @@ public class SteamcraftBlocks {
 	}
 
 	public static void registerSteamMachines(){
+		if (Config.enableBlockPlacer){
+			blockPlacer = new BlockPlacer().setCreativeTab(Steamcraft.tab).setBlockName("steamcraft:blockPlacer").setHardness(5.0F).setResistance(10.0F);
+			GameRegistry.registerBlock(blockPlacer, "blockPlacer");
+		}
+		
 		if (Config.enablePump){
 			pump = new BlockPump().setCreativeTab(Steamcraft.tab).setBlockName("steamcraft:pump").setHardness(5.0F).setResistance(10.0F);
 			GameRegistry.registerBlock(pump,"pump");

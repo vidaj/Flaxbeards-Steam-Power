@@ -1,25 +1,112 @@
 package flaxbeard.steamcraft.tile;
 
+import java.util.ArrayList;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import thaumcraft.common.blocks.BlockAiry;
 import flaxbeard.steamcraft.api.tile.SteamTransporterTileEntity;
 import flaxbeard.steamcraft.api.util.Coord4;
 
 public class TileEntityBlockPlacer extends SteamTransporterTileEntity implements IInventory{
 	
 	private ItemStack[] inventory = new ItemStack[1];
-	int tick = 0;
+	int workingTick = 0;
 	int meta = -1;
 	Coord4 target;
+	boolean wasRunning = false;
 	
 	Block placingBlock;
 	int placingMeta;
 	
+	// #################################################
+	// #              NBT/Packet Stuff                 #
+	// #################################################
+	@Override
+    public void readFromNBT(NBTTagCompound access)
+    {
+        super.readFromNBT(access);
+        this.workingTick = access.getInteger("workingTick");
+    	
+    	this.placingBlock = Block.getBlockById(access.getInteger("block"));
+    	this.placingMeta = access.getInteger("placingMeta");
+    	NBTTagList nbttaglist = (NBTTagList) access.getTag("Items");
+
+    	this.inventory = new ItemStack[2];
+
+        for (int i = 0; i < nbttaglist.tagCount(); ++i)
+        {
+            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
+            byte b0 = nbttagcompound1.getByte("Slot");
+
+            if (b0 >= 0 && b0 < this.inventory.length)
+            {
+                this.inventory[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            }
+        }
+        
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound access)
+    {
+        super.writeToNBT(access);
+        access.setInteger("workingTick", workingTick);
+        access.setInteger("block", Block.getIdFromBlock(placingBlock));
+        access.setInteger("placingMeta", placingMeta);
+        
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (int i = 0; i < this.inventory.length; ++i)
+        {
+            if (this.inventory[i] != null)
+            {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                this.inventory[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
+            }
+        }
+        access.setTag("Items", nbttaglist);
+    }
+
+	@Override
+	public Packet getDescriptionPacket()
+	{
+        NBTTagCompound access = super.getDescriptionTag();
+        access.setInteger("workingTick", workingTick);
+        access.setInteger("block", Block.getIdFromBlock(placingBlock));
+        access.setInteger("placingMeta", placingMeta);
+
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, access);
+	}	
+	
+	@Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+    {
+		//log.debug("updated");
+    	super.onDataPacket(net, pkt);
+    	NBTTagCompound access = pkt.func_148857_g();
+    	
+    	this.workingTick = access.getInteger("workingTick");
+    	this.placingBlock = Block.getBlockById(access.getInteger("block"));
+    	this.placingMeta = access.getInteger("placingMeta");
+    }
+	
+	
+	// #################################################
+	// #              IInventory stuff                 #
+	// #################################################
 	@Override
 	public int getSizeInventory() {
 		// TODO Auto-generated method stub
@@ -32,6 +119,7 @@ public class TileEntityBlockPlacer extends SteamTransporterTileEntity implements
 		}
 		return null;
 	}
+	
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack stack = this.getStackInSlot(slot);
@@ -90,14 +178,19 @@ public class TileEntityBlockPlacer extends SteamTransporterTileEntity implements
 		Item item = stack.getItem();
 		if (item instanceof ItemBlock){
 			//log.debug("it's a block");
-			ItemBlock ib = (ItemBlock) item;
-			if (! (ib.field_150939_a instanceof BlockContainer)){
-				log.debug("Just a regular block, boss");
+			Block b = Block.getBlockFromItem(item);
+			if (b.isNormalCube() && b.renderAsNormalBlock()){
+				
 				return true;
 			}
 		}
 		return false;
 	}
+	
+	
+	// #################################################
+	// #                   Custom                      #
+	// #################################################
 	
 	private boolean hasItem(){
 		if (this.getStackInSlot(0) != null){
@@ -118,26 +211,66 @@ public class TileEntityBlockPlacer extends SteamTransporterTileEntity implements
 		if (this.target == null){
 			this.target = this.getTarget();
 		}
-		
-		
-		if (this.hasItem() && worldObj.isAirBlock(target.x, target.y, target.z) && worldObj.getTileEntity(target.x, target.y, target.z) == null){
-			if (tick == 0){
-				this.tick++;
-				this.markForUpdate();
-			} else if (tick < 20){
-				this.tick++;
-			} else {
-				this.tick = 0;
-				
+
+		if (worldObj.isRemote){
+			if (workingTick > 0 && workingTick < 20){
+				workingTick++;
+			} else if (workingTick >= 20){
+				//log.debug("stopped");
+				workingTick = 0;
 			}
 		} else {
-			this.tick = 0;
-			this.markForUpdate();
+			if (this.hasItem() && 
+					worldObj.isAirBlock(target.x, target.y, target.z) && 
+					worldObj.getTileEntity(target.x, target.y, target.z) == null
+			){
+				if (workingTick == 0){
+					if (this.getSteamShare() > 100){
+						this.decrSteam(100);
+						worldObj.playSoundEffect(xCoord + 0.5D, yCoord+0.5D, zCoord + 0.5D, "steamcraft:hiss", 0.3F, 1.5F);
+						if (!wasRunning){
+							//log.debug("is now running");
+							this.wasRunning = true;
+						}
+						
+						ItemStack stack = this.getStackInSlot(0);
+						Item item = stack.getItem();
+						Block block = Block.getBlockFromItem(item);
+						this.placingBlock = block;
+						this.placingMeta = stack.getItemDamage();
+						this.workingTick++;
+						this.markForUpdate();
+					}
+					
+				} else if (workingTick < 20){
+					this.workingTick++;
+				} else {
+					this.decrStackSize(0, 1);
+					worldObj.playSoundEffect(target.x+0.5D, target.y+0.5D, target.z+0.5D, this.placingBlock.stepSound.getBreakSound(), 0.5F, (float) (0.75F+(Math.random()*0.1F)));
+					worldObj.setBlock(target.x, target.y, target.z, this.placingBlock);
+					worldObj.setBlockMetadataWithNotify(target.x, target.y, target.z, placingMeta, 2);
+					this.workingTick = 0;
+					
+				}
+			} else {
+				this.workingTick = 0;
+				if (wasRunning){
+					//log.debug("is no longer running");
+					this.wasRunning = false;
+					this.markForUpdate();
+				}
+				
+			}
 		}
+		
 		
 	}
 	
 	private Coord4 getTarget(){
+		if (this.meta >=0){
+			ForgeDirection dir = ForgeDirection.getOrientation(meta);
+			return new Coord4(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, getDimension());
+		}
 		return null;
 	}
 	
