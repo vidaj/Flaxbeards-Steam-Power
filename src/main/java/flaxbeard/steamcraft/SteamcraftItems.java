@@ -12,6 +12,7 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemFishFood;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -484,23 +485,30 @@ public class SteamcraftItems {
     private static void registerSteamToolUpgrades() {
         if (Config.enableSteamTools) {
             if (Config.enableDiamondHead) {
-                SteamcraftRegistry.registerSteamToolUpgrade(diamondHead, SteamToolSlot.drillHead, null, 1, "diamondHead");
+                HashMap<String, Integer> effects = new HashMap<>();
+                effects.put("miningLevel", 3);
+                SteamcraftRegistry.registerSteamToolUpgrade(diamondHead, SteamToolSlot.drillHead,
+                  null, 1, "diamondHead", effects);
             }
 
             if (Config.enableHammerHead) {
-                SteamcraftRegistry.registerSteamToolUpgrade(hammerHead, SteamToolSlot.drillHead, null, 1, "hammerHead");
+                SteamcraftRegistry.registerSteamToolUpgrade(hammerHead, SteamToolSlot.drillHead,
+                  null, 1, "hammerHead", null);
             }
 
             if (Config.enableLeafBlower) {
-                SteamcraftRegistry.registerSteamToolUpgrade(leafBlower, SteamToolSlot.sawAttachment, null, 1, "leafBlower");
+                SteamcraftRegistry.registerSteamToolUpgrade(leafBlower, SteamToolSlot.sawAttachment,
+                  null, 1, "leafBlower", null);
             }
 
             if (Config.enableCultivator) {
-                SteamcraftRegistry.registerSteamToolUpgrade(cultivator, SteamToolSlot.shovelHead, null, 1, "cultivator");
+                SteamcraftRegistry.registerSteamToolUpgrade(cultivator, SteamToolSlot.shovelHead,
+                  null, 1, "cultivator", null);
             }
 
             if (Config.enableRotaryBlades) {
-                SteamcraftRegistry.registerSteamToolUpgrade(rotaryBlades, SteamToolSlot.shovelHead, null, 1, "rotaryBlades");
+                SteamcraftRegistry.registerSteamToolUpgrade(rotaryBlades, SteamToolSlot.shovelHead,
+                  null, 1, "rotaryBlades", null);
             }
         }
     }
