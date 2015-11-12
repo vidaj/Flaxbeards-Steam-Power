@@ -39,7 +39,6 @@ public class SteamcraftRegistry {
     public static HashMap<String, ExosuitPlate> plates = new HashMap<String, ExosuitPlate>();
     public static HashMap<MutablePair<Integer, ExosuitPlate>, IIcon> plateIcons = new HashMap<MutablePair<Integer, ExosuitPlate>, IIcon>();
     public static HashMap<MutablePair<Item, Integer>, MutablePair<Item, Integer>> steamedFoods = new HashMap<MutablePair<Item, Integer>, MutablePair<Item, Integer>>();
-    public static List upgrades = new ArrayList<ItemSteamToolUpgrade>();
 
     private static int nextEnhancementID = 0;
 
@@ -152,12 +151,5 @@ public class SteamcraftRegistry {
 
     public static void registerRocket(IRocket rocket) {
         rockets.add(rocket);
-    }
-
-    public static void registerSteamToolUpgrade(Item upgrade, SteamToolSlot slot, String info, int priority, String unlocalized, HashMap<String, Integer> basicEffects) {
-        String resource = String.format("steamcraft:%s", unlocalized);
-        upgrade = new ItemSteamToolUpgrade(slot, resource, info, priority, basicEffects);
-        GameRegistry.registerItem(upgrade, unlocalized);
-        upgrades.add(upgrade);
     }
 }
