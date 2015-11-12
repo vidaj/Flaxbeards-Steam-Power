@@ -1513,8 +1513,8 @@ public class SteamcraftEventHandler {
               drill.isWound(event.entityPlayer)) {
                 float hardness = event.block.getBlockHardness(event.entityPlayer.worldObj, event.x,
                   event.y, event.z);
+                // This might be a little too slow. It still needs some tweaking.
                 event.newSpeed = event.originalSpeed * ((hardness * 1.5F) / 8);
-                System.out.println(event.newSpeed);
             }
         }
     }
@@ -1538,7 +1538,6 @@ public class SteamcraftEventHandler {
     };
 
     private int[][] getExtraBlockCoordinates(int sideHit) {
-        System.out.println(sideHit);
         switch (sideHit) {
             case 5: return extraBlocksSide;
             case 4: return extraBlocksSide;
