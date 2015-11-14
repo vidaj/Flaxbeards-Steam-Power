@@ -25,8 +25,7 @@ import flaxbeard.steamcraft.entity.EntityFloatingItem;
 import flaxbeard.steamcraft.entity.EntityMortarItem;
 import flaxbeard.steamcraft.entity.EntityRocket;
 import flaxbeard.steamcraft.gui.SteamcraftGuiHandler;
-import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
-import flaxbeard.steamcraft.handler.SteamcraftTickHandler;
+import flaxbeard.steamcraft.handler.GeneralHandler;
 import flaxbeard.steamcraft.integration.CrossMod;
 import flaxbeard.steamcraft.item.ItemSmashedOre;
 import flaxbeard.steamcraft.tile.*;
@@ -148,9 +147,8 @@ public class Steamcraft {
         channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("steamcraft");
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SteamcraftGuiHandler());
 
-        MinecraftForge.EVENT_BUS.register(new SteamcraftEventHandler());
-
-        FMLCommonHandler.instance().bus().register(new SteamcraftTickHandler());
+        GeneralHandler.handlers.forEach((handler, bus) -> bus.register(handler));
+        MinecraftForge.EVENT_BUS.register(new GeneralHandler());
 
         if (event.getSide() == Side.CLIENT) {
             FMLCommonHandler.instance().bus().register(new ExosuitModelCache());

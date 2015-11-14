@@ -10,7 +10,8 @@ import flaxbeard.steamcraft.api.enhancement.IEnhancementRocketLauncher;
 import flaxbeard.steamcraft.api.enhancement.UtilEnhancements;
 import flaxbeard.steamcraft.entity.EntityRocket;
 import flaxbeard.steamcraft.gui.GuiEngineeringTable;
-import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
+import flaxbeard.steamcraft.handler.GeneralHandler;
+import flaxbeard.steamcraft.handler.HandlerUtils;
 import flaxbeard.steamcraft.item.ItemExosuitArmor;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -314,7 +315,7 @@ public class ItemRocketLauncher extends Item implements IEngineerable {
                         //                 par3EntityPlayer.motionZ = -MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F));
                         //                 par3EntityPlayer.motionX = MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F));
                     }
-                    if (!(SteamcraftEventHandler.isJumping(par3EntityPlayer) && !par3EntityPlayer.capabilities.isFlying && UtilEnhancements.hasEnhancement(par1ItemStack) && UtilEnhancements.getEnhancementFromItem(par1ItemStack) instanceof ItemEnhancementAirStrike)) {
+                    if (!(HandlerUtils.isJumping(par3EntityPlayer) && !par3EntityPlayer.capabilities.isFlying && UtilEnhancements.hasEnhancement(par1ItemStack) && UtilEnhancements.getEnhancementFromItem(par1ItemStack) instanceof ItemEnhancementAirStrike)) {
                         par1ItemStack.stackTagCompound.setInteger("fireDelay", this.timeBetweenFire + enhancementDelay);
                     }
                 }

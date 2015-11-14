@@ -22,7 +22,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
-public class SteamcraftTickHandler {
+public class TickHandler extends HandlerUtils {
     private static float zoom = 0.0F;
     ResourceLocation spyglassfiller = new ResourceLocation("steamcraft:textures/gui/spyglassfiller.png");
     ResourceLocation spyglass = new ResourceLocation("steamcraft:textures/gui/spyglassfiller.png");
@@ -41,7 +41,7 @@ public class SteamcraftTickHandler {
         inUse = false;
         if (event.side == Side.CLIENT && mc.thePlayer != null) {
             if (mc.currentScreen == null || !(mc.currentScreen instanceof GuiMerchant)) {
-                SteamcraftEventHandler.lastViewVillagerGui = false;
+                lastViewVillagerGui = false;
             }
             EntityPlayer player = mc.thePlayer;
             if (Mouse.isButtonDown(1) && player.isSneaking() && player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemBlock) {
@@ -53,7 +53,7 @@ public class SteamcraftTickHandler {
                     }
                 }
             }
-            if (SteamcraftEventHandler.hasPower(player, 1)
+            if (hasPower(player, 1)
                     && player.getEquipmentInSlot(2) != null
                     && player.getEquipmentInSlot(2).getItem() instanceof ItemExosuitArmor) {
                 ItemExosuitArmor leggings = (ItemExosuitArmor) player.getEquipmentInSlot(2).getItem();
@@ -75,7 +75,7 @@ public class SteamcraftTickHandler {
                     ItemStack armor = player.getCurrentArmor(2);
                     if (armor != null && armor.getItem() == SteamcraftItems.exoArmorBody) {
                         ItemExosuitArmor item = (ItemExosuitArmor) armor.getItem();
-                        if (item.hasUpgrade(armor, SteamcraftItems.jetpack) && SteamcraftEventHandler.hasPower(player, 5)) {
+                        if (item.hasUpgrade(armor, SteamcraftItems.jetpack) && hasPower(player, 5)) {
                             if (!player.onGround && !player.capabilities.isFlying) {
                                 player.motionY = player.motionY + 0.06D;
                                 double rotation = Math.toRadians(player.renderYawOffset);
@@ -89,7 +89,7 @@ public class SteamcraftTickHandler {
                     ItemStack armor2 = player.getCurrentArmor(0);
                     if (armor2 != null && armor2.getItem() == SteamcraftItems.exoArmorFeet) {
                         ItemExosuitArmor item = (ItemExosuitArmor) armor2.getItem();
-                        if (item.hasUpgrade(armor2, SteamcraftItems.doubleJump) && SteamcraftEventHandler.hasPower(player, 15)) {
+                        if (item.hasUpgrade(armor2, SteamcraftItems.doubleJump) && hasPower(player, 15)) {
                             if (!armor2.stackTagCompound.hasKey("usedJump")) {
                                 armor2.stackTagCompound.setBoolean("usedJump", false);
                             }

@@ -1,7 +1,8 @@
 package flaxbeard.steamcraft.misc;
 
 import flaxbeard.steamcraft.entity.EntityRocket;
-import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
+import flaxbeard.steamcraft.handler.GeneralHandler;
+import flaxbeard.steamcraft.handler.HandlerUtils;
 import flaxbeard.steamcraft.packet.SteamcraftServerPacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -173,7 +174,7 @@ public class ExplosionRocket extends Explosion {
                     entity.motionZ += d7 * d8 * (entity == this.exploder ? 3.0F : 1.0F) * (this.dropAllBlocks ? 0.1F : 1.0F);
 
                     if (entity instanceof EntityPlayer) {
-                        SteamcraftEventHandler.isJumping.put(entity.getEntityId(), 5);
+                        HandlerUtils.isJumping.put(entity.getEntityId(), 5);
                         if (((EntityPlayer) entity).capabilities.isCreativeMode) {
                             SteamcraftServerPacketHandler.sendRocketJumpHackyPacket((EntityPlayerMP) entity, d5 * d8 * (entity == this.exploder ? 3.0F : 1.0F) * (this.dropAllBlocks ? 0.15F : 1.0F), d6 * d8 * (entity == this.exploder ? 2.0F : 1.0F) * (this.dropAllBlocks ? 0.15F : 1.0F), d7 * d8 * (entity == this.exploder ? 3.0F : 1.0F) * (this.dropAllBlocks ? 0.15F : 1.0F));
                         }

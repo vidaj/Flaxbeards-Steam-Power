@@ -3,7 +3,8 @@ package flaxbeard.steamcraft.client.render;
 import flaxbeard.steamcraft.api.enhancement.IEnhancementFirearm;
 import flaxbeard.steamcraft.api.enhancement.IEnhancementRocketLauncher;
 import flaxbeard.steamcraft.api.enhancement.UtilEnhancements;
-import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
+import flaxbeard.steamcraft.handler.GeneralHandler;
+import flaxbeard.steamcraft.handler.HandlerUtils;
 import flaxbeard.steamcraft.item.firearm.ItemFirearm;
 import flaxbeard.steamcraft.item.firearm.ItemRocketLauncher;
 import net.minecraft.client.Minecraft;
@@ -43,7 +44,7 @@ public class ItemFirearmRenderer implements IItemRenderer {
             nbt.setInteger("numloaded", 0);
         }
         NBTTagCompound nbt = itemStack.getTagCompound();
-        int use = SteamcraftEventHandler.use;
+        int use = HandlerUtils.use;
         int loaded = nbt.getInteger("loaded");
 
         double health = (double) (use) / (double) itemStack.getMaxItemUseDuration();

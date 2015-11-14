@@ -10,7 +10,8 @@ import flaxbeard.steamcraft.SteamcraftItems;
 import flaxbeard.steamcraft.api.block.IDisguisableBlock;
 import flaxbeard.steamcraft.entity.EntityRocket;
 import flaxbeard.steamcraft.gui.ContainerSteamAnvil;
-import flaxbeard.steamcraft.handler.SteamcraftEventHandler;
+import flaxbeard.steamcraft.handler.GeneralHandler;
+import flaxbeard.steamcraft.handler.HandlerUtils;
 import flaxbeard.steamcraft.item.ItemExosuitArmor;
 import flaxbeard.steamcraft.tile.TileEntitySteamHammer;
 import flaxbeard.steamcraft.tile.TileEntitySteamPipe;
@@ -25,7 +26,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
@@ -118,18 +118,18 @@ public class SteamcraftServerPacketHandler {
                 ItemStack armor = player.getCurrentArmor(2);
                 if (armor != null && armor.getItem() == SteamcraftItems.exoArmorBody) {
                     ItemExosuitArmor item = (ItemExosuitArmor) armor.getItem();
-                    if (item.hasUpgrade(armor, SteamcraftItems.jetpack) && SteamcraftEventHandler.hasPower(player, 5)) {
+                    if (item.hasUpgrade(armor, SteamcraftItems.jetpack) && HandlerUtils.hasPower(player, 5)) {
                         if (!player.onGround && !player.capabilities.isFlying) {
                             player.motionY = player.motionY + 0.06D;
                             player.fallDistance = 0.0F;
-                            SteamcraftEventHandler.drainSteam(player.getCurrentArmor(2), Config.jetpackConsumption);
+                            HandlerUtils.drainSteam(player.getCurrentArmor(2), Config.jetpackConsumption);
                         }
                     }
                 }
                 ItemStack armor2 = player.getCurrentArmor(0);
                 if (armor2 != null && armor2.getItem() == SteamcraftItems.exoArmorFeet) {
                     ItemExosuitArmor item = (ItemExosuitArmor) armor2.getItem();
-                    if (item.hasUpgrade(armor2, SteamcraftItems.doubleJump) && SteamcraftEventHandler.hasPower(player, 15)) {
+                    if (item.hasUpgrade(armor2, SteamcraftItems.doubleJump) && HandlerUtils.hasPower(player, 15)) {
                         if (!armor2.stackTagCompound.hasKey("usedJump")) {
                             armor2.stackTagCompound.setBoolean("usedJump", false);
                         }
@@ -142,7 +142,7 @@ public class SteamcraftServerPacketHandler {
                             player.motionY = player.motionY + 0.3D;
                             double rotation = Math.toRadians(player.renderYawOffset);
                             player.fallDistance = 0.0F;
-                            SteamcraftEventHandler.drainSteam(player.getCurrentArmor(2), 10);
+                            HandlerUtils.drainSteam(player.getCurrentArmor(2), 10);
 
                         }
                         armor2.stackTagCompound.setBoolean("releasedSpace", false);
