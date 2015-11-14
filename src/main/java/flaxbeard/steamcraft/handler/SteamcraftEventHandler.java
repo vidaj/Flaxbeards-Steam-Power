@@ -128,43 +128,45 @@ public class SteamcraftEventHandler {
         }
     }
 
-//	@SubscribeEvent
-//	public void handleMobDrop(LivingDropsEvent event) {
-//		if (event.entityLiving instanceof EntityCreeper) {
-//			int gunpowder = 0;
-//			for (EntityItem drop : event.drops) {
-//				if (drop.getEntityItem().getItem() == Items.gunpowder) {
-//					gunpowder+=drop.getEntityItem().stackSize;
-//				}
-//			}
-//			if (gunpowder >= 2 && !event.entityLiving.worldObj.isRemote && event.entityLiving.worldObj.rand.nextBoolean()) {
-//				int dropsLeft = 2;
-//				ArrayList<EntityItem> dropsToRemove = new ArrayList<EntityItem>();
-//				EntityItem baseItem = null;
-//				for (EntityItem drop : event.drops) {
-//					if (baseItem == null && drop.getEntityItem().getItem() == Items.gunpowder) {
-//						baseItem = drop;
-//					}
-//					if (dropsLeft > 0 && drop.getEntityItem().getItem() == Items.gunpowder) {
-//						if (drop.getEntityItem().stackSize <= dropsLeft) {
-//							dropsLeft -= drop.getEntityItem().stackSize;
-//							dropsToRemove.add(drop);
-//						}
-//						else
-//						{
-//							drop.getEntityItem().stackSize -= dropsLeft;
-//							dropsLeft = 0;
-//						}
-//					}
-//				}
-//				for (EntityItem drop : dropsToRemove) {
-//					event.drops.remove(drop);
-//				}
-//				baseItem.setEntityItemStack(new ItemStack(SteamcraftItems.steamcraftCrafting,1,5));
-//                event.drops.add(baseItem);
-//			}
-//		}
-//	}
+    /*
+	@SubscribeEvent
+	public void handleMobDrop(LivingDropsEvent event) {
+		if (event.entityLiving instanceof EntityCreeper) {
+			int gunpowder = 0;
+			for (EntityItem drop : event.drops) {
+				if (drop.getEntityItem().getItem() == Items.gunpowder) {
+					gunpowder+=drop.getEntityItem().stackSize;
+				}
+			}
+			if (gunpowder >= 2 && !event.entityLiving.worldObj.isRemote && event.entityLiving.worldObj.rand.nextBoolean()) {
+				int dropsLeft = 2;
+				ArrayList<EntityItem> dropsToRemove = new ArrayList<EntityItem>();
+				EntityItem baseItem = null;
+				for (EntityItem drop : event.drops) {
+					if (baseItem == null && drop.getEntityItem().getItem() == Items.gunpowder) {
+						baseItem = drop;
+					}
+					if (dropsLeft > 0 && drop.getEntityItem().getItem() == Items.gunpowder) {
+						if (drop.getEntityItem().stackSize <= dropsLeft) {
+							dropsLeft -= drop.getEntityItem().stackSize;
+							dropsToRemove.add(drop);
+						}
+						else
+						{
+							drop.getEntityItem().stackSize -= dropsLeft;
+							dropsLeft = 0;
+						}
+					}
+				}
+				for (EntityItem drop : dropsToRemove) {
+					event.drops.remove(drop);
+				}
+				baseItem.setEntityItemStack(new ItemStack(SteamcraftItems.steamcraftCrafting,1,5));
+                event.drops.add(baseItem);
+			}
+		}
+	}
+    */
 
     public static boolean isJumping(EntityPlayer player) {
         if (isJumping.containsKey(player.getEntityId())) {
@@ -215,28 +217,29 @@ public class SteamcraftEventHandler {
             GL11.glPopMatrix();
         }
     }
-//
-//	@SubscribeEvent
-//	public void preRender(RenderLivingEvent.Pre event) {
-//		if (event.entity.isPotionActive(Steamcraft.semiInvisible)) {
-//	        GL11.glPushMatrix();
-//	        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.10F);
-//	        GL11.glDepthMask(false);
-//	        GL11.glEnable(GL11.GL_BLEND);
-//	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//	        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
-//		}
-//	}
+    /*
+	@SubscribeEvent
+	public void preRender(RenderLivingEvent.Pre event) {
+		if (event.entity.isPotionActive(Steamcraft.semiInvisible)) {
+	        GL11.glPushMatrix();
+	        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.10F);
+	        GL11.glDepthMask(false);
+	        GL11.glEnable(GL11.GL_BLEND);
+	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+		}
+	}
 
-//	@SubscribeEvent
-//	public void postRender(RenderLivingEvent.Post event) {
-//		if (event.entity.isPotionActive(Steamcraft.semiInvisible)) {
-//	        GL11.glDisable(GL11.GL_BLEND);
-//	        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-//	        GL11.glPopMatrix();
-//	        GL11.glDepthMask(true);
-//		}
-//	}
+	@SubscribeEvent
+	public void postRender(RenderLivingEvent.Post event) {
+		if (event.entity.isPotionActive(Steamcraft.semiInvisible)) {
+	        GL11.glDisable(GL11.GL_BLEND);
+	        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+	        GL11.glPopMatrix();
+	        GL11.glDepthMask(true);
+		}
+	}
+    */
 
     @SubscribeEvent
     public void handleCanningMachine(EntityItemPickupEvent event) {
@@ -354,29 +357,31 @@ public class SteamcraftEventHandler {
         if (event.type == ElementType.ALL) {
             Minecraft mc = Minecraft.getMinecraft();
             EntityPlayer player = mc.thePlayer;
-//			if (!player.capabilities.isCreativeMode && player.inventory.armorItemInSlot(1) != null && player.inventory.armorItemInSlot(1).getItem() instanceof ItemExosuitArmor) {
-//				ItemStack stack = player.inventory.armorItemInSlot(1);
-//				ItemExosuitArmor item = (ItemExosuitArmor) stack.getItem();
-//				//if (item.hasUpgrade(stack, SteamcraftItems.doubleJump)) {
-//					if (!stack.stackTagCompound.hasKey("aidTicks")) {
-//						stack.stackTagCompound.setInteger("aidTicks", -1);
-//					}
-//					int aidTicks = stack.stackTagCompound.getInteger("aidTicks");
-//
-//					int aidTicksScaled = 7-(int)(aidTicks*7.0F / 100.0F);
-//					int screenX = event.resolution.getScaledWidth() / 2  - 101;
-//					int screenY = event.resolution.getScaledHeight() - 39;
-//					mc.getTextureManager().bindTexture(icons);
-//					renderTexture(screenX,screenY,9,9,0,0,9D/256D,9D/256D);
-//					if (aidTicks > 0) {
-//						renderTexture(screenX+1,screenY,aidTicksScaled,9,10D/256D,0,(10D+aidTicksScaled)/256D,9D/256D);
-//					}
-//					else if (aidTicks == 0) {
-//						renderTexture(screenX,screenY,9,9,18D/256D,0,27D/256D,9D/256D);
-//					}
-//					//}
-//
-//			}
+            /*
+            if (!player.capabilities.isCreativeMode && player.inventory.armorItemInSlot(1) != null && player.inventory.armorItemInSlot(1).getItem() instanceof ItemExosuitArmor) {
+				ItemStack stack = player.inventory.armorItemInSlot(1);
+				ItemExosuitArmor item = (ItemExosuitArmor) stack.getItem();
+				if (item.hasUpgrade(stack, SteamcraftItems.doubleJump)) {
+					if (!stack.stackTagCompound.hasKey("aidTicks")) {
+						stack.stackTagCompound.setInteger("aidTicks", -1);
+					}
+					int aidTicks = stack.stackTagCompound.getInteger("aidTicks");
+
+					int aidTicksScaled = 7-(int)(aidTicks*7.0F / 100.0F);
+					int screenX = event.resolution.getScaledWidth() / 2  - 101;
+					int screenY = event.resolution.getScaledHeight() - 39;
+					mc.getTextureManager().bindTexture(icons);
+					renderTexture(screenX,screenY,9,9,0,0,9D/256D,9D/256D);
+					if (aidTicks > 0) {
+						renderTexture(screenX+1,screenY,aidTicksScaled,9,10D/256D,0,(10D+aidTicksScaled)/256D,9D/256D);
+					}
+					else if (aidTicks == 0) {
+						renderTexture(screenX,screenY,9,9,18D/256D,0,27D/256D,9D/256D);
+					}
+				}
+
+			}
+            */
             Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
             MovingObjectPosition pos = mc.objectMouseOver;
             if (pos != null && mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof IPipeWrench && ((IPipeWrench) equipped).canWrench(player, pos.blockX, pos.blockY, pos.blockZ)) {
@@ -1083,37 +1088,39 @@ public class SteamcraftEventHandler {
         if (((event.entity instanceof EntityPlayer)) && (((EntityPlayer) event.entity).inventory.armorItemInSlot(1) != null) && (((EntityPlayer) event.entity).inventory.armorItemInSlot(1).getItem() instanceof ItemExosuitArmor)) {
             ItemStack stack = ((EntityPlayer) event.entity).inventory.armorItemInSlot(1);
             ItemExosuitArmor item = (ItemExosuitArmor) stack.getItem();
-            //if (item.hasUpgrade(stack, SteamcraftItems.doubleJump)) {
-//				if (!stack.stackTagCompound.hasKey("aidTicks")) {
-//					stack.stackTagCompound.setInteger("aidTicks", -1);
-//				}
-//				int aidTicks = stack.stackTagCompound.getInteger("aidTicks");
-//
-//				if (aidTicks > 0) {
-//					aidTicks--;
-//				}
-//				if (aidTicks == 0) {
-//					if (!stack.stackTagCompound.hasKey("ticksNextHeal")) {
-//						stack.stackTagCompound.setInteger("ticksNextHeal", 0);
-//					}
-//					float damageAmount = stack.stackTagCompound.getInteger("damageAmount");
-//					int ticksNextHeal = stack.stackTagCompound.getInteger("ticksNextHeal");
-//					if (ticksNextHeal > 0) {
-//						ticksNextHeal--;
-//					}
-//					if (ticksNextHeal == 0) {
-//						//event.entityLiving.heal(1.0F);
-//						damageAmount -=1.0F;
-//						stack.stackTagCompound.setFloat("damageAmount", damageAmount);
-//						ticksNextHeal=5;
-//					}
-//					if (damageAmount == 0.0F) {
-//						aidTicks = -1;
-//					}
-//					stack.stackTagCompound.setInteger("ticksNextHeal", ticksNextHeal);
-//				}
-//				stack.stackTagCompound.setInteger("aidTicks", aidTicks);
-            //}
+            /*
+            if (item.hasUpgrade(stack, SteamcraftItems.doubleJump)) {
+				if (!stack.stackTagCompound.hasKey("aidTicks")) {
+					stack.stackTagCompound.setInteger("aidTicks", -1);
+				}
+				int aidTicks = stack.stackTagCompound.getInteger("aidTicks");
+
+				if (aidTicks > 0) {
+					aidTicks--;
+				}
+				if (aidTicks == 0) {
+					if (!stack.stackTagCompound.hasKey("ticksNextHeal")) {
+						stack.stackTagCompound.setInteger("ticksNextHeal", 0);
+					}
+					float damageAmount = stack.stackTagCompound.getInteger("damageAmount");
+					int ticksNextHeal = stack.stackTagCompound.getInteger("ticksNextHeal");
+					if (ticksNextHeal > 0) {
+						ticksNextHeal--;
+					}
+					if (ticksNextHeal == 0) {
+						//event.entityLiving.heal(1.0F);
+						damageAmount -=1.0F;
+						stack.stackTagCompound.setFloat("damageAmount", damageAmount);
+						ticksNextHeal=5;
+					}
+					if (damageAmount == 0.0F) {
+						aidTicks = -1;
+					}
+					stack.stackTagCompound.setInteger("ticksNextHeal", ticksNextHeal);
+       			}
+				stack.stackTagCompound.setInteger("aidTicks", aidTicks);
+            }
+            */
         }
 
         if (!event.entity.worldObj.isRemote && ((event.entity instanceof EntityPlayer)) && (((EntityPlayer) event.entity).onGround)) {
@@ -1185,33 +1192,36 @@ public class SteamcraftEventHandler {
                 }
             }
         }
-//
-//		if (hasPower(entity,100) && entity.getEquipmentInSlot(2) != null && entity.getEquipmentInSlot(2).getItem() instanceof ItemExosuitArmor && !entity.worldObj.isRemote) {
-//			ItemExosuitArmor leggings = (ItemExosuitArmor) entity.getEquipmentInSlot(2).getItem();
-//			if (leggings.hasUpgrade(entity.getEquipmentInSlot(2), SteamcraftItems.antiFire)) {
-//				if (entity.isBurning()) {
-//
-//					event.entityLiving.getEquipmentInSlot(3).damageItem(10, event.entityLiving);
-//					if (entity.worldObj.isAirBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ) || entity.worldObj.getBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ).isReplaceable(entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ) || entity.worldObj.getBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ) == Blocks.fire) {
-//
-//						entity.worldObj.setBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ, Blocks.water, 1, 1);
-//					}
-//				}
-//			}
-//		}
+        /*
+		if (hasPower(entity,100) && entity.getEquipmentInSlot(2) != null && entity.getEquipmentInSlot(2).getItem() instanceof ItemExosuitArmor && !entity.worldObj.isRemote) {
+			ItemExosuitArmor leggings = (ItemExosuitArmor) entity.getEquipmentInSlot(2).getItem();
+			if (leggings.hasUpgrade(entity.getEquipmentInSlot(2), SteamcraftItems.antiFire)) {
+				if (entity.isBurning()) {
+
+					event.entityLiving.getEquipmentInSlot(3).damageItem(10, event.entityLiving);
+					if (entity.worldObj.isAirBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ) || entity.worldObj.getBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ).isReplaceable(entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ) || entity.worldObj.getBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ) == Blocks.fire) {
+
+						entity.worldObj.setBlock((int)entity.posX, (int)entity.posY, (int)entity.posZ, Blocks.water, 1, 1);
+					}
+				}
+			}
+		}
+        */
     }
 
     @SideOnly(Side.CLIENT)
     public void updateRangeClient(LivingEvent.LivingUpdateEvent event) {
         EntityLivingBase entity = event.entityLiving;
         if (entity == Minecraft.getMinecraft().thePlayer) {
-//			if (!worldStartUpdate && entity.getEquipmentInSlot(3) != null && entity.getEquipmentInSlot(3).getItem() instanceof ItemExosuitArmor) {
-//				ItemExosuitArmor chest = (ItemExosuitArmor) entity.getEquipmentInSlot(3).getItem();
-//				if (chest.hasUpgrade(entity.getEquipmentInSlot(3), SteamcraftItems.extendoFist)) {
-//
-//					Steamcraft.proxy.extendRange(entity,Config.extendedRange);
-//				}
-//			}
+            /*
+			if (!worldStartUpdate && entity.getEquipmentInSlot(3) != null && entity.getEquipmentInSlot(3).getItem() instanceof ItemExosuitArmor) {
+				ItemExosuitArmor chest = (ItemExosuitArmor) entity.getEquipmentInSlot(3).getItem();
+				if (chest.hasUpgrade(entity.getEquipmentInSlot(3), SteamcraftItems.extendoFist)) {
+
+					Steamcraft.proxy.extendRange(entity,Config.extendedRange);
+				}
+			}
+            */
             worldStartUpdate = true;
 
             //Steamcraft.proxy.extendRange(entity,1.0F);
@@ -1264,9 +1274,11 @@ public class SteamcraftEventHandler {
 
         if (hasPower) {
             if (entity.isSneaking()) {
-//				if ((!event.entityLiving.isPotionActive(Steamcraft.semiInvisible) || event.entityLiving.getActivePotionEffect(Steamcraft.semiInvisible).getDuration() < 2)) {
-//					event.entityLiving.addPotionEffect(new PotionEffect(Steamcraft.semiInvisible.id, 2, 0, false));
-//				}
+                /*
+				if ((!event.entityLiving.isPotionActive(Steamcraft.semiInvisible) || event.entityLiving.getActivePotionEffect(Steamcraft.semiInvisible).getDuration() < 2)) {
+					event.entityLiving.addPotionEffect(new PotionEffect(Steamcraft.semiInvisible.id, 2, 0, false));
+				}
+                */
             }
 
             if (!lastMotions.containsKey(entity.getEntityId())) {
@@ -1341,9 +1353,11 @@ public class SteamcraftEventHandler {
         }
     }
 
-//	public boolean isMoving(EntityLivingBase entity) {
-//		return (entity.isp)
-//	}
+    /*
+	public boolean isMoving(EntityLivingBase entity) {
+		return (entity.isp)
+	}
+	*/
 
     private void removeBadExoBoost(EntityLivingBase entity) {
         if (entity.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getModifier(uuid2) != null) {
@@ -1461,12 +1475,14 @@ public class SteamcraftEventHandler {
 
     @SubscribeEvent
     public void handleEnhancement(AnvilUpdateEvent event) {
-//		if (event.right.getItem() instanceof IEnhancement) {
-//			IEnhancement enhancement = (IEnhancement) event.right.getItem();
-//			if (enhancement.canApplyTo(event.left) && UtilEnhancements.canEnhance(event.left)) {
-//				event.cost = enhancement.cost(event.left);
-//				event.output = UtilEnhancements.getEnhancedItem(event.left, event.right);
-//			}
-//		}
+        /*
+		if (event.right.getItem() instanceof IEnhancement) {
+			IEnhancement enhancement = (IEnhancement) event.right.getItem();
+			if (enhancement.canApplyTo(event.left) && UtilEnhancements.canEnhance(event.left)) {
+				event.cost = enhancement.cost(event.left);
+				event.output = UtilEnhancements.getEnhancedItem(event.left, event.right);
+			}
+		}
+        */
     }
 }
