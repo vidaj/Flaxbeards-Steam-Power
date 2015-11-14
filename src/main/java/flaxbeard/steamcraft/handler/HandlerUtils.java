@@ -19,8 +19,11 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class HandlerUtils {
 	protected static final UUID uuid = UUID.fromString("bbd786a9-611f-4c31-88ad-36dc9da3e15c");
@@ -77,16 +80,11 @@ public class HandlerUtils {
 	}
 
 	protected int getExoArmor(EntityLivingBase entityLiving) {
-		int num = 0;
-		for (int i = 1; i < 5; i++) {
-			if (entityLiving.getEquipmentInSlot(i) != null) {
-				ItemStack stack = entityLiving.getEquipmentInSlot(i);
-				if (stack.getItem() instanceof ItemExosuitArmor) {
-					num++;
-				}
-			}
-		}
-		return num;
+		return (int)
+			IntStream.rangeClosed(1, 4).parallel()
+			.filter(i -> entityLiving.getEquipmentInSlot(i) != null
+					&& (entityLiving.getEquipmentInSlot(i).getItem() instanceof ItemExosuitArmor))
+			.count();
 	}
 
 	@SideOnly(Side.CLIENT)

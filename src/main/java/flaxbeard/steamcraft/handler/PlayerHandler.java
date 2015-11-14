@@ -47,16 +47,11 @@ public class PlayerHandler extends HandlerUtils {
 		EntityLivingBase entity = event.entityLiving;
 		if (entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entity;
-			if (CrossMod.BAUBLES) {
-				if (player.getHeldItem() != null && BaublesIntegration.checkForSurvivalist(player)) {
-					if (player.getHeldItem().getItem() instanceof ItemTool) {
-						if (player.getHeldItem().getItemDamage() >= player.getHeldItem().getMaxDamage() - 1) {
-
-							event.newSpeed = 0.0F;
-						}
-					}
-
-				}
+			boolean heldTool = player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemTool;
+			boolean survivalist = CrossMod.BAUBLES && BaublesIntegration.checkForSurvivalist(player);
+			boolean damageNotMaxed = player.getHeldItem().getItemDamage() >= player.getHeldItem().getMaxDamage() - 1;
+			if (heldTool && survivalist && damageNotMaxed) {
+				event.newSpeed = 0.0F;
 			} else if (player.getHeldItem() != null && hasItemInHotbar(player, SteamcraftItems.survivalist)) {
 				if (player.getHeldItem().getItem() instanceof ItemTool) {
 					if (player.getHeldItem().getItemDamage() >= player.getHeldItem().getMaxDamage() - 1) {
@@ -67,18 +62,18 @@ public class PlayerHandler extends HandlerUtils {
 			if (player.getHeldItem() != null) {
 				if (player.getHeldItem().getItem() instanceof ItemSteamDrill) {
 					ItemSteamDrill.checkNBT(player);
-					MutablePair info = ItemSteamDrill.stuff.get(player.getEntityId());
-					int ticks = (Integer) info.left;
-					int speed = (Integer) info.right;
+					MutablePair<Integer, Integer> info = ItemSteamDrill.stuff.get(player.getEntityId());
+					int ticks = info.left;
+					int speed = info.right;
 					if (speed > 0 && Items.iron_pickaxe.func_150893_a(player.getHeldItem(), event.block) != 1.0F) {
 						event.newSpeed *= 1.0F + 11.0F * (speed / 1000.0F);
 					}
 				}
 				if (player.getHeldItem().getItem() instanceof ItemSteamAxe) {
 					ItemSteamAxe.checkNBT(player);
-					MutablePair info = ItemSteamAxe.stuff.get(player.getEntityId());
-					int ticks = (Integer) info.left;
-					int speed = (Integer) info.right;
+					MutablePair<Integer, Integer> info = ItemSteamAxe.stuff.get(player.getEntityId());
+					int ticks = info.left;
+					int speed = info.right;
 					if (speed > 0 && Items.diamond_axe.func_150893_a(player.getHeldItem(), event.block) != 1.0F) {
 						event.newSpeed *= 1.0F + 11.0F * (speed / 1000.0F);
 					}
@@ -86,9 +81,9 @@ public class PlayerHandler extends HandlerUtils {
 				if (player.getHeldItem().getItem() instanceof ItemSteamShovel) {
 					ItemSteamShovel.checkNBT(player);
 					ItemSteamShovel shovel = (ItemSteamShovel) player.getHeldItem().getItem();
-					MutablePair info = ItemSteamShovel.stuff.get(player.getEntityId());
-					int ticks = (Integer) info.left;
-					int speed = (Integer) info.right;
+					MutablePair<Integer, Integer> info = ItemSteamShovel.stuff.get(player.getEntityId());
+					int ticks = info.left;
+					int speed = info.right;
 
 					if (speed > 0 && Items.diamond_shovel.func_150893_a(player.getHeldItem(), event.block) != 1.0F) {
 						event.newSpeed *= 1.0F + 19.0F * (speed / 3000.0F);
@@ -114,14 +109,11 @@ public class PlayerHandler extends HandlerUtils {
 			if (event.world.isRemote && player.getEquipmentInSlot(3) != null && player.getEquipmentInSlot(3).getItem() instanceof ItemExosuitArmor) {
 				if (event.face != 0) {
 					ItemExosuitArmor chest = (ItemExosuitArmor) player.getEquipmentInSlot(3).getItem();
-					boolean canStick = false;
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
-					List list = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x + (dir.offsetX / 6F), event.y + (dir.offsetY / 6F) - 1.0F, event.z + (dir.offsetZ / 6F), event.x + (dir.offsetX / 6F) + 1, event.y + (dir.offsetY / 6F) + 2.0F, event.z + (dir.offsetZ / 6F) + 1));
-					for (Object obj : list) {
-						if (obj == player) {
-							canStick = true;
-						}
-					}
+					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x + (dir.offsetX / 6F), event.y + (dir.offsetY / 6F) - 1.0F, event.z + (dir.offsetZ / 6F), event.x + (dir.offsetX / 6F) + 1, event.y + (dir.offsetY / 6F) + 2.0F, event.z + (dir.offsetZ / 6F) + 1))
+					.parallelStream()
+					.anyMatch(o -> o == player);
+
 					if (event.world.isRemote && canStick && chest.hasUpgrade(player.getEquipmentInSlot(3), SteamcraftItems.pitonDeployer)) {
 						player.getEquipmentInSlot(3).stackTagCompound.setFloat("x", (float) player.posX);
 						player.getEquipmentInSlot(3).stackTagCompound.setFloat("z", (float) player.posZ);
@@ -139,14 +131,11 @@ public class PlayerHandler extends HandlerUtils {
 					}
 				} else {
 					ItemExosuitArmor chest = (ItemExosuitArmor) player.getEquipmentInSlot(3).getItem();
-					boolean canStick = false;
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
-					List list = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x - 0.5F, event.y + (dir.offsetY / 6F) - 0.4F, event.z - 0.20F, event.x + 0.5F + 1, event.y + (dir.offsetY / 6F) + 1, event.z + 0.5F + 1));
-					for (Object obj : list) {
-						if (obj == player) {
-							canStick = true;
-						}
-					}
+					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x - 0.5F, event.y + (dir.offsetY / 6F) - 0.4F, event.z - 0.20F, event.x + 0.5F + 1, event.y + (dir.offsetY / 6F) + 1, event.z + 0.5F + 1))
+					.parallelStream()
+					.anyMatch(o -> o == player);
+
 					if (canStick && event.world.isRemote && chest.hasUpgrade(player.getEquipmentInSlot(3), SteamcraftItems.pitonDeployer)) {
 						player.getEquipmentInSlot(3).stackTagCompound.setFloat("x", (float) player.posX);
 						player.getEquipmentInSlot(3).stackTagCompound.setFloat("z", (float) player.posZ);

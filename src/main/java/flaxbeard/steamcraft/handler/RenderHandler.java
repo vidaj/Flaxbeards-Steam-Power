@@ -3,6 +3,7 @@ package flaxbeard.steamcraft.handler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import flaxbeard.steamcraft.Steamcraft;
 import flaxbeard.steamcraft.SteamcraftItems;
 import flaxbeard.steamcraft.api.IPipeWrench;
 import flaxbeard.steamcraft.api.IWrenchDisplay;
@@ -77,20 +78,22 @@ public class RenderHandler {
 				Block block = mc.theWorld.getBlock(pos.blockX, pos.blockY, pos.blockZ);
 				ItemStack stack = block.getPickBlock(pos, player.worldObj, pos.blockX, pos.blockY, pos.blockZ, player);
 				if (stack != null) {
-					for (ItemStack stack2 : SteamcraftRegistry.bookRecipes.keySet()) {
-						if (stack2.getItem() == stack.getItem() && stack2.getItemDamage() == stack.getItemDamage()) {
-							GL11.glPushMatrix();
-							int x = event.resolution.getScaledWidth() / 2 - 8;
-							int y = event.resolution.getScaledHeight() / 2 - 8;
+					SteamcraftRegistry.bookRecipes.keySet().stream()
+					.filter(stack2 -> stack2.getItem() == stack.getItem()
+						    && stack2.getItemDamage() == stack.getItemDamage())
+					.forEach(stack2 -> {
+						GL11.glPushMatrix();
+						int x = event.resolution.getScaledWidth() / 2 - 8;
+						int y = event.resolution.getScaledHeight() / 2 - 8;
 
-							int color = 0x6600FF00;
-							RenderItem.getInstance().renderItemIntoGUI(mc.fontRenderer, mc.renderEngine, new ItemStack(SteamcraftItems.book), x, y);
-							GL11.glDisable(GL11.GL_LIGHTING);
-							mc.fontRenderer.drawStringWithShadow("", x + 15, y + 13, 0xC6C6C6);
-							GL11.glPopMatrix();
-							GL11.glEnable(GL11.GL_BLEND);
-						}
-					}
+						int color = 0x6600FF00;
+						RenderItem.getInstance().renderItemIntoGUI(mc.fontRenderer, mc.renderEngine, new ItemStack(SteamcraftItems.book), x, y);
+						GL11.glDisable(GL11.GL_LIGHTING);
+						mc.fontRenderer.drawStringWithShadow("", x + 15, y + 13, 0xC6C6C6);
+						GL11.glPopMatrix();
+						GL11.glEnable(GL11.GL_BLEND);
+					});
+
 				}
 			}
 
@@ -107,10 +110,10 @@ public class RenderHandler {
 			int var7 = var5.getScaledHeight();
 			FontRenderer var8 = mc.fontRenderer;
 			int selectedRocketType = 0;
-			if (Minecraft.getMinecraft().thePlayer.getHeldItem().hasTagCompound()) {
-				if (Minecraft.getMinecraft().thePlayer.getHeldItem().stackTagCompound.hasKey("rocketType")) {
-					selectedRocketType = Minecraft.getMinecraft().thePlayer.getHeldItem().stackTagCompound.getInteger("rocketType");
-				}
+			boolean itemHasTag = Minecraft.getMinecraft().thePlayer.getHeldItem().hasTagCompound();
+			boolean itemHasTagRocket = itemHasTag && Minecraft.getMinecraft().thePlayer.getHeldItem().stackTagCompound.hasKey("rocketType");
+			if (itemHasTagRocket) {
+				selectedRocketType = Minecraft.getMinecraft().thePlayer.getHeldItem().stackTagCompound.getInteger("rocketType");
 			}
 			if (selectedRocketType > SteamcraftRegistry.rockets.size() - 1) {
 				selectedRocketType = 0;
