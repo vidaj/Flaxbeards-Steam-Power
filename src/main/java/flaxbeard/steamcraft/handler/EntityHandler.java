@@ -1,6 +1,7 @@
 package flaxbeard.steamcraft.handler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import flaxbeard.steamcraft.Steamcraft;
 import flaxbeard.steamcraft.SteamcraftItems;
 import flaxbeard.steamcraft.entity.EntityCanisterItem;
 import flaxbeard.steamcraft.item.ItemExosuitArmor;
@@ -11,6 +12,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class EntityHandler extends HandlerUtils {
 	@SubscribeEvent
@@ -21,44 +26,41 @@ public class EntityHandler extends HandlerUtils {
 				ItemExosuitArmor leggings = (ItemExosuitArmor) player.getEquipmentInSlot(2).getItem();
 				if (leggings.hasUpgrade(player.getEquipmentInSlot(2), SteamcraftItems.canner)) {
 
-					boolean isCannable = false;
 					ItemStack item = event.item.getEntityItem().copy();
+
 					if (item.hasTagCompound() && item.stackTagCompound.hasKey("canned")) {
 						return;
 					}
+
+					int[] oreIds = OreDictionary.getOreIDs(item);
+					boolean isCannable = Arrays.asList(ArrayUtils.toObject(oreIds))
+						.parallelStream()
+					 	.map(OreDictionary::getOreName)
+						.map(String::toLowerCase)
+						.anyMatch(str -> str.contains("ingot")
+								  || str.contains("gem")
+							      || str.contains("ore"));
 
 					if (item.getItem().getUnlocalizedName(item).toLowerCase().contains("ingot")
 						|| item.getItem().getUnlocalizedName(item).toLowerCase().contains("gem")
 						|| item.getItem().getUnlocalizedName(item).toLowerCase().contains("ore")) {
 						isCannable = true;
 					}
-					for (int id : OreDictionary.getOreIDs(item)) {
-						String str = OreDictionary.getOreName(id);
-						if (str.toLowerCase().contains("ingot")
-							|| str.toLowerCase().contains("gem")
-							|| str.toLowerCase().contains("ore")) {
-							isCannable = true;
-						}
-					}
+
 					if (isCannable) {
-						int numCans = 0;
-						for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-							if (player.inventory.getStackInSlot(i) != null) {
-								if (player.inventory.getStackInSlot(i).getItem() == SteamcraftItems.canister) {
-									numCans += player.inventory.getStackInSlot(i).stackSize;
-								}
-							}
-						}
+						int numCans = IntStream.range(0, player.inventory.getSizeInventory())
+					    	.parallel()
+							.mapToObj(player.inventory::getStackInSlot)
+						    .filter(stack -> stack != null
+								  && stack.getItem() == SteamcraftItems.canister)
+						    .mapToInt(stack -> stack.stackSize)
+						    .sum();
 						if (numCans >= item.stackSize) {
 							if (!item.hasTagCompound()) {
 								item.setTagCompound(new NBTTagCompound());
 							}
 							item.stackTagCompound.setInteger("canned", 0);
 							event.item.setEntityItemStack(item);
-							for (int i = 0; i < item.stackSize; i++) {
-								player.inventory.consumeInventoryItem(SteamcraftItems.canister);
-								player.inventoryContainer.detectAndSendChanges();
-							}
 						} else if (numCans != 0) {
 							item.stackSize -= numCans;
 							event.item.setEntityItemStack(item);
@@ -70,11 +72,12 @@ public class EntityHandler extends HandlerUtils {
 							item2.stackTagCompound.setInteger("canned", 0);
 							EntityItem entityItem = new EntityItem(player.worldObj, player.posX, player.posY, player.posZ, item2);
 							player.worldObj.spawnEntityInWorld(entityItem);
-							for (int i = 0; i < numCans; i++) {
-								player.inventory.consumeInventoryItem(SteamcraftItems.canister);
-								player.inventoryContainer.detectAndSendChanges();
-							}
 						}
+						IntStream.range(0, numCans)
+						.forEach(i -> {
+							player.inventory.consumeInventoryItem(SteamcraftItems.canister);
+							player.inventoryContainer.detectAndSendChanges();
+						});
 					}
 				}
 			}

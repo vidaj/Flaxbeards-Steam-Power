@@ -37,6 +37,7 @@ import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PlayerHandler extends HandlerUtils {
@@ -112,8 +113,8 @@ public class PlayerHandler extends HandlerUtils {
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
 					@SuppressWarnings("unchecked")
 					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x + (dir.offsetX / 6F), event.y + (dir.offsetY / 6F) - 1.0F, event.z + (dir.offsetZ / 6F), event.x + (dir.offsetX / 6F) + 1, event.y + (dir.offsetY / 6F) + 2.0F, event.z + (dir.offsetZ / 6F) + 1))
-					.parallelStream()
-					.anyMatch(o -> o == player);
+						.parallelStream()
+						.anyMatch(o -> o == player);
 
 					if (event.world.isRemote && canStick && chest.hasUpgrade(player.getEquipmentInSlot(3), SteamcraftItems.pitonDeployer)) {
 						player.getEquipmentInSlot(3).stackTagCompound.setFloat("x", (float) player.posX);
@@ -135,8 +136,8 @@ public class PlayerHandler extends HandlerUtils {
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
 					@SuppressWarnings("unchecked")
 					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x - 0.5F, event.y + (dir.offsetY / 6F) - 0.4F, event.z - 0.20F, event.x + 0.5F + 1, event.y + (dir.offsetY / 6F) + 1, event.z + 0.5F + 1))
-					.parallelStream()
-					.anyMatch(o -> o == player);
+						.parallelStream()
+						.anyMatch(o -> o == player);
 
 					if (canStick && event.world.isRemote && chest.hasUpgrade(player.getEquipmentInSlot(3), SteamcraftItems.pitonDeployer)) {
 						player.getEquipmentInSlot(3).stackTagCompound.setFloat("x", (float) player.posX);
@@ -170,7 +171,9 @@ public class PlayerHandler extends HandlerUtils {
 				event.setCanceled(true);
 			}
 		}
-		if (event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z) != null && !event.entityPlayer.worldObj.isRemote) {
+		if (event.entityPlayer != null
+			&& event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z) != null
+			&& !event.entityPlayer.worldObj.isRemote) {
 			if (event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z) instanceof TileEntitySteamHeater) {
 			}
 			if (event.entityPlayer.worldObj.getTileEntity(event.x, event.y, event.z) instanceof ISteamTransporter) {
@@ -188,12 +191,14 @@ public class PlayerHandler extends HandlerUtils {
 	@SubscribeEvent
 	public void doubleExp(PlayerPickupXpEvent event) {
 		EntityPlayer player = event.entityPlayer;
-		IntStream.rangeClosed(1, 4).parallel()
-		.mapToObj(player::getEquipmentInSlot)
-		.filter(stack -> stack.getItem() instanceof ItemExosuitArmor
-			    && ((ItemExosuitArmor) stack.getItem()).hasPlates(stack)
-				&& Objects.equals(UtilPlates.getPlate(stack.stackTagCompound.getString("plate")).getIdentifier(), "Gold"))
-		.forEach(ignored -> event.orb.xpValue = MathHelper.ceiling_float_int(event.orb.xpColor * 1.25F));
+		long count = IntStream.rangeClosed(1, 4)
+			.parallel()
+			.mapToObj(player::getEquipmentInSlot)
+			.filter(stack -> stack.getItem() instanceof ItemExosuitArmor
+					&& ((ItemExosuitArmor) stack.getItem()).hasPlates(stack)
+					&& Objects.equals(UtilPlates.getPlate(stack.stackTagCompound.getString("plate")).getIdentifier(), "Gold"))
+			.count();
+		event.orb.xpValue = MathHelper.ceiling_float_int(event.orb.xpColor * (float) Math.pow(1.25F, count));
 	}
 
 	@SubscribeEvent
@@ -230,8 +235,9 @@ public class PlayerHandler extends HandlerUtils {
 	}
 
 	private boolean hasItemInHotbar(EntityPlayer player, Item item) {
-		return IntStream.rangeClosed(0, 9).parallel()
-		.mapToObj(player.inventory::getStackInSlot)
-		.anyMatch(stack -> stack != null && stack.getItem() == item);
+		return IntStream.rangeClosed(0, 9)
+			.parallel()
+			.mapToObj(player.inventory::getStackInSlot)
+			.anyMatch(stack -> stack != null && stack.getItem() == item);
 	}
 }
