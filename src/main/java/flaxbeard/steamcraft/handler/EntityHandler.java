@@ -34,7 +34,7 @@ public class EntityHandler extends HandlerUtils {
 
 					int[] oreIds = OreDictionary.getOreIDs(item);
 					boolean isCannable = Arrays.asList(ArrayUtils.toObject(oreIds))
-						.parallelStream()
+						.stream()
 					 	.map(OreDictionary::getOreName)
 						.map(String::toLowerCase)
 						.anyMatch(str -> str.contains("ingot")
@@ -49,7 +49,6 @@ public class EntityHandler extends HandlerUtils {
 
 					if (isCannable) {
 						int numCans = IntStream.range(0, player.inventory.getSizeInventory())
-					    	.parallel()
 							.mapToObj(player.inventory::getStackInSlot)
 						    .filter(stack -> stack != null
 								  && stack.getItem() == SteamcraftItems.canister)

@@ -26,7 +26,6 @@ public class CanisterHandler implements IRecipe {
         boolean canCraft = true;
 
         List<ItemStack> list = IntStream.range(0, inv.getSizeInventory())
-            .parallel()
             .mapToObj(inv::getStackInSlot)
             .filter(stack -> stack != null)
             .collect(Collectors.toList());

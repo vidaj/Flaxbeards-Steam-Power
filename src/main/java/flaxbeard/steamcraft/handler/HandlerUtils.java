@@ -79,7 +79,7 @@ public class HandlerUtils {
 
 	protected int getExoArmor(EntityLivingBase entityLiving) {
 		return (int)
-			IntStream.rangeClosed(1, 4).parallel()
+			IntStream.rangeClosed(1, 4)
 			.filter(i -> entityLiving.getEquipmentInSlot(i) != null
 					&& (entityLiving.getEquipmentInSlot(i).getItem() instanceof ItemExosuitArmor))
 			.count();

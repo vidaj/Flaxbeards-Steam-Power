@@ -113,7 +113,7 @@ public class PlayerHandler extends HandlerUtils {
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
 					@SuppressWarnings("unchecked")
 					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x + (dir.offsetX / 6F), event.y + (dir.offsetY / 6F) - 1.0F, event.z + (dir.offsetZ / 6F), event.x + (dir.offsetX / 6F) + 1, event.y + (dir.offsetY / 6F) + 2.0F, event.z + (dir.offsetZ / 6F) + 1))
-						.parallelStream()
+						.stream()
 						.anyMatch(o -> o == player);
 
 					if (event.world.isRemote && canStick && chest.hasUpgrade(player.getEquipmentInSlot(3), SteamcraftItems.pitonDeployer)) {
@@ -136,7 +136,7 @@ public class PlayerHandler extends HandlerUtils {
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
 					@SuppressWarnings("unchecked")
 					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x - 0.5F, event.y + (dir.offsetY / 6F) - 0.4F, event.z - 0.20F, event.x + 0.5F + 1, event.y + (dir.offsetY / 6F) + 1, event.z + 0.5F + 1))
-						.parallelStream()
+						.stream()
 						.anyMatch(o -> o == player);
 
 					if (canStick && event.world.isRemote && chest.hasUpgrade(player.getEquipmentInSlot(3), SteamcraftItems.pitonDeployer)) {
@@ -192,7 +192,6 @@ public class PlayerHandler extends HandlerUtils {
 	public void doubleExp(PlayerPickupXpEvent event) {
 		EntityPlayer player = event.entityPlayer;
 		long count = IntStream.rangeClosed(1, 4)
-			.parallel()
 			.mapToObj(player::getEquipmentInSlot)
 			.filter(stack -> stack.getItem() instanceof ItemExosuitArmor
 					&& ((ItemExosuitArmor) stack.getItem()).hasPlates(stack)
@@ -236,7 +235,6 @@ public class PlayerHandler extends HandlerUtils {
 
 	private boolean hasItemInHotbar(EntityPlayer player, Item item) {
 		return IntStream.rangeClosed(0, 9)
-			.parallel()
 			.mapToObj(player.inventory::getStackInSlot)
 			.anyMatch(stack -> stack != null && stack.getItem() == item);
 	}
