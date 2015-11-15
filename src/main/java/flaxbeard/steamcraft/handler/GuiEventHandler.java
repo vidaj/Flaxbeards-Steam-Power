@@ -15,6 +15,7 @@ import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 public class GuiEventHandler extends HandlerUtils {
+	@SuppressWarnings("unchecked")
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void updateVillagersClientside(GuiScreenEvent event) {
@@ -27,7 +28,7 @@ public class GuiEventHandler extends HandlerUtils {
 				IMerchant merch = ReflectionHelper.getPrivateValue(GuiMerchant.class, gui, 2);
 				MerchantRecipeList recipeList = merch.getRecipes(mc.thePlayer);
 				if (recipeList != null) {
-					for (Object obj : recipeList) {
+					recipeList.forEach(obj -> {
 						MerchantRecipe recipe = (MerchantRecipe) obj;
 						if (recipe.getItemToSell().stackSize > 1 && recipe.getItemToSell().stackSize != MathHelper.floor_float(recipe.getItemToSell().stackSize * 1.25F)) {
 							recipe.getItemToSell().stackSize = MathHelper.floor_float(recipe.getItemToSell().stackSize * 1.25F);
@@ -36,7 +37,7 @@ public class GuiEventHandler extends HandlerUtils {
 						} else if (recipe.getSecondItemToBuy() != null && recipe.getSecondItemToBuy().stackSize > 1 && recipe.getSecondItemToBuy().stackSize != MathHelper.ceiling_float_int(recipe.getSecondItemToBuy().stackSize / 1.25F)) {
 							recipe.getSecondItemToBuy().stackSize = MathHelper.ceiling_float_int(recipe.getSecondItemToBuy().stackSize / 1.25F);
 						}
-					}
+					});
 					lastViewVillagerGui = true;
 				}
 				merch.setRecipes(recipeList);
