@@ -19,9 +19,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 

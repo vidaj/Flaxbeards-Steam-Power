@@ -26,7 +26,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -37,7 +36,8 @@ import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import org.apache.commons.lang3.tuple.MutablePair;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class PlayerHandler extends HandlerUtils {
 	@SubscribeEvent
@@ -110,6 +110,7 @@ public class PlayerHandler extends HandlerUtils {
 				if (event.face != 0) {
 					ItemExosuitArmor chest = (ItemExosuitArmor) player.getEquipmentInSlot(3).getItem();
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
+					@SuppressWarnings("unchecked")
 					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x + (dir.offsetX / 6F), event.y + (dir.offsetY / 6F) - 1.0F, event.z + (dir.offsetZ / 6F), event.x + (dir.offsetX / 6F) + 1, event.y + (dir.offsetY / 6F) + 2.0F, event.z + (dir.offsetZ / 6F) + 1))
 					.parallelStream()
 					.anyMatch(o -> o == player);
@@ -132,6 +133,7 @@ public class PlayerHandler extends HandlerUtils {
 				} else {
 					ItemExosuitArmor chest = (ItemExosuitArmor) player.getEquipmentInSlot(3).getItem();
 					ForgeDirection dir = ForgeDirection.getOrientation(event.face);
+					@SuppressWarnings("unchecked")
 					boolean canStick = event.world.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox(event.x - 0.5F, event.y + (dir.offsetY / 6F) - 0.4F, event.z - 0.20F, event.x + 0.5F + 1, event.y + (dir.offsetY / 6F) + 1, event.z + 0.5F + 1))
 					.parallelStream()
 					.anyMatch(o -> o == player);
@@ -186,18 +188,12 @@ public class PlayerHandler extends HandlerUtils {
 	@SubscribeEvent
 	public void doubleExp(PlayerPickupXpEvent event) {
 		EntityPlayer player = event.entityPlayer;
-		for (int i = 1; i < 5; i++) {
-			float multValu = 1;
-			if (player.getEquipmentInSlot(i) != null) {
-				ItemStack stack = player.getEquipmentInSlot(i);
-				if (stack.getItem() instanceof ItemExosuitArmor) {
-					if (((ItemExosuitArmor) stack.getItem()).hasPlates(stack) && UtilPlates.getPlate(stack.stackTagCompound.getString("plate")).getIdentifier() == "Gold") {
-						multValu *= 1.25F;
-					}
-				}
-			}
-			event.orb.xpValue = MathHelper.ceiling_float_int(event.orb.xpValue * multValu);
-		}
+		IntStream.rangeClosed(1, 4).parallel()
+		.mapToObj(player::getEquipmentInSlot)
+		.filter(stack -> stack.getItem() instanceof ItemExosuitArmor
+			    && ((ItemExosuitArmor) stack.getItem()).hasPlates(stack)
+				&& Objects.equals(UtilPlates.getPlate(stack.stackTagCompound.getString("plate")).getIdentifier(), "Gold"))
+		.forEach(ignored -> event.orb.xpValue = MathHelper.ceiling_float_int(event.orb.xpColor * 1.25F));
 	}
 
 	@SubscribeEvent
@@ -223,22 +219,19 @@ public class PlayerHandler extends HandlerUtils {
 
 	@SubscribeEvent
 	public void rightClick(PlayerInteractEvent event) {
-		if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-			if (event.entityPlayer.getHeldItem() != null) {
-				if ((event.entityPlayer.getHeldItem().getItem() instanceof ItemSteamDrill || event.entityPlayer.getHeldItem().getItem() instanceof ItemSteamAxe || event.entityPlayer.getHeldItem().getItem() instanceof ItemSteamShovel) && (event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z) == null || event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z) != SteamcraftBlocks.charger)) {
-					event.setCanceled(true);
-				}
-			}
+		boolean block = event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK;
+		boolean heldItem = event.entityPlayer.getHeldItem() != null;
+		boolean steamTool = event.entityPlayer.getHeldItem().getItem() instanceof ItemSteamDrill || event.entityPlayer.getHeldItem().getItem() instanceof ItemSteamAxe || event.entityPlayer.getHeldItem().getItem() instanceof ItemSteamShovel;
+		boolean noBlock = event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z) == null;
+		boolean charger = event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z) != SteamcraftBlocks.charger;
+		if (block && heldItem && steamTool && (noBlock || charger)) {
+			event.setCanceled(true);
 		}
-
 	}
 
 	private boolean hasItemInHotbar(EntityPlayer player, Item item) {
-		for (int i = 0; i < 10; i++) {
-			if (player.inventory.getStackInSlot(i) != null && player.inventory.getStackInSlot(i).getItem() == item) {
-				return true;
-			}
-		}
-		return false;
+		return IntStream.rangeClosed(0, 9).parallel()
+		.mapToObj(player.inventory::getStackInSlot)
+		.anyMatch(stack -> stack != null && stack.getItem() == item);
 	}
 }
