@@ -24,6 +24,7 @@ public class Config {
     public static final int BASIC_TANK_CAPACITY_DEFAULT = 36000;
     public static final int REINFORCED_TANK_CAPACITY_DEFAULT = 72000;
     public static final int UBER_REINFORCED_TANK_CAPACITY_DEFAULT = 144000;
+    public static final int ZINC_PLATE_CONSUMPTION_DEFAULT = 30;
 
     public static final float extendedRange = 2.0F; //Range extension in blocks
     public static final float fallAssistDivisor = 2;
@@ -89,6 +90,7 @@ public class Config {
     public static int screwConsumption;
     public static int heaterConsumption;
     public static int vacuumConsumption;
+    public static int zincPlateConsumption;
     public static String musketDamage;
     public static String pistolDamage;
     public static String blunderbussDamage;
@@ -173,6 +175,7 @@ public class Config {
     public static boolean enableIronPlate;
     public static boolean enableGoldPlate;
     public static boolean enableBrassPlate;
+    public static boolean enableZincPlate;
     public static boolean enableLeadPlate;
     public static boolean enableThaumiumPlate;
     public static boolean enableElementiumPlate;
@@ -298,6 +301,7 @@ public class Config {
         thrusterConsumption = config.get("Exosuit", "The amount of steam the Exosuit Thrusters consumes", THRUSTER_CONSUMPTION_DEFAULT).getInt();
         runAssistConsumption = config.get("Exosuit", "The amount of steam the Exosuit Run Assist consumes", RUN_ASSIST_CONSUMPTION_DEFAULT).getInt();
         powerFistConsumption = config.get("Exosuit", "The amount of steam the Exosuit Power Fist consumes", POWER_FIST_CONSUMPTION_DEFAULT).getInt();
+        zincPlateConsumption = config.get("Exosuit", "The amount of steam the Exosuit Zinc Plate consumes". ZINC_PLATE_CONSUMPTION_DEFAULT).getInt();
 
         // EXOSUIT UPGRADES
         enableFallAssist = config.get("Exosuit Upgrades", "Enable Fall Assist", true).getBoolean(true);
