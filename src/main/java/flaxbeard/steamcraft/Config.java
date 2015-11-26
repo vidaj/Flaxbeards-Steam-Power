@@ -29,6 +29,7 @@ public class Config {
     public static final int PYROPHOBIC_CONSUMPTION_DEFAULT = 5;
     public static final int HYDROPHOBIC_CONSUMPTION_DEFAULT = 10;
     public static final int PISTON_PUSH_CONSUMPTION_DEFAULT = 5;
+    public static final int RELOADING_CONSUMPTION_DEFAULT = 15;
 
     public static final float extendedRange = 2.0F; //Range extension in blocks
     public static final float fallAssistDivisor = 2;
@@ -99,6 +100,7 @@ public class Config {
     public static int hydrophobicConsumption;
     public static int pyrophobicConsumption;
     public static int pistonPushConsumption;
+    public static int reloadingConsumption;
     public static String musketDamage;
     public static String pistolDamage;
     public static String blunderbussDamage;
@@ -182,6 +184,7 @@ public class Config {
     public static boolean enablePyrophobic;
     public static boolean enableAnchorHeels;
     public static boolean enablePistonPush;
+    public static boolean enableReloadingHolsters;
 
     //plates
     public static boolean enableCopperPlate;
@@ -320,6 +323,7 @@ public class Config {
         pyrophobicConsumption = config.get("Exosuit", "The amount of steam the Pyrophobic Coatings consume", PYROPHOBIC_CONSUMPTION_DEFAULT).getInt();
         enableAnchorAnvilRecipe = config.get("Exosuit", "Use the leadless Anchor Heels recipe. This will always be true if there is no lead available.", false).getBoolean(false);
         pistonPushConsumption = config.get("Exosuit", "The amount of steam the Piston Push consumes", PISTON_PUSH_CONSUMPTION_DEFAULT).getInt();
+        reloadingConsumption = config.get("Exosuit", "The amount of steam the Reloading Holsters consume", RELOADING_CONSUMPTION_DEFAULT).getInt();
 
         // EXOSUIT UPGRADES
         enableFallAssist = config.get("Exosuit Upgrades", "Enable Fall Assist", true).getBoolean(true);
@@ -342,6 +346,7 @@ public class Config {
         enablePyrophobic = config.get("Exosuit Upgrades", "Enable Pyrophobic Coatings", true).getBoolean(true);
         enableAnchorHeels = config.get("Exosuit Upgrades", "Enable Anchor Heels", true).getBoolean(true);
         enablePistonPush = config.get("Exosuit Upgrades", "Enable Piston Push", true).getBoolean(true);
+        enableReloadingHolsters = config.get("Exosuit Upgrades", "Enable Reloading Holsters", true).getBoolean(true);
 
         enableCopperPlate = config.get("Exosuit Plates", "Enable copper plate", true).getBoolean(true);
         enableZincPlate = config.get("Exosuit Plates", "Enable zinc plate", true).getBoolean(true);
