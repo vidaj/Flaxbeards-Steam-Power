@@ -1688,43 +1688,48 @@ public class SteamcraftEventHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void openMerchant(EntityInteractEvent event) {
         EntityPlayer player = event.entityPlayer;
         Entity target = event.target;
-        if (playerHasFrequencyShifter(player) && (target instanceof EntityWolf ||
-          target instanceof EntityOcelot)) {
-            EntityLiving living = (EntityLiving) target;
-            String merchantName;
-            int maximumTrades;
-            NBTTagCompound entityNBT = living.getEntityData();
-            if (!entityNBT.hasKey("maximumTrades")) {
-                Random random = new Random();
-                entityNBT.setInteger("maximumTrades", random.nextInt(7));
-            }
-            if (!entityNBT.hasKey("totalTrades")) {
-                entityNBT.setInteger("totalTrades", 0);
-            }
-            maximumTrades = entityNBT.getInteger("maximumTrades");
-            int totalTrades = entityNBT.getInteger("totalTrades");
-            if (totalTrades > maximumTrades) {
-                if (living instanceof EntityWolf) {
-                    EntityWolf wolf = (EntityWolf) living;
-                    wolf.setAngry(true);
-                } else {
-                    EntityOcelot cat = (EntityOcelot) living;
-                    living.targetTasks.addTask(3, new EntityAIHurtByTarget(cat, true));
+        boolean playerHasShifter = playerHasFrequencyShifter(player);
+        if (playerHasShifter) {
+            if (target instanceof EntityVillager) {
+                player.playSound("mob.villager.no", 1.0F, 1.0F);
+                event.setCanceled(true);
+            } else if (target instanceof EntityWolf || target instanceof EntityOcelot) {
+                EntityLiving living = (EntityLiving) target;
+                String merchantName;
+                int maximumTrades;
+                NBTTagCompound entityNBT = living.getEntityData();
+                if (!entityNBT.hasKey("maximumTrades")) {
+                    Random random = new Random();
+                    entityNBT.setInteger("maximumTrades", random.nextInt(7));
                 }
-            } else {
-                if (entityNBT.hasKey("merchantName")) {
-                    merchantName = entityNBT.getString("merchantName");
-                } else {
-                    merchantName = merchantNames[new Random().nextInt(merchantNames.length)];
+                if (!entityNBT.hasKey("totalTrades")) {
+                    entityNBT.setInteger("totalTrades", 0);
                 }
-                FrequencyMerchant merchant = new FrequencyMerchant(living, merchantName);
-                merchant.setCustomer(player);
-                player.displayGUIMerchant(merchant, merchantName);
-                entityNBT.setInteger("totalTrades", entityNBT.getInteger("totalTrades") + 1);
+                maximumTrades = entityNBT.getInteger("maximumTrades");
+                int totalTrades = entityNBT.getInteger("totalTrades");
+                if (totalTrades > maximumTrades) {
+                    if (living instanceof EntityWolf) {
+                        EntityWolf wolf = (EntityWolf) living;
+                        wolf.setAngry(true);
+                    } else {
+                        EntityOcelot cat = (EntityOcelot) living;
+                        living.targetTasks.addTask(3, new EntityAIHurtByTarget(cat, true));
+                    }
+                } else {
+                    if (entityNBT.hasKey("merchantName")) {
+                        merchantName = entityNBT.getString("merchantName");
+                    } else {
+                        merchantName = merchantNames[new Random().nextInt(merchantNames.length)];
+                    }
+                    FrequencyMerchant merchant = new FrequencyMerchant(living, merchantName);
+                    merchant.setCustomer(player);
+                    player.displayGUIMerchant(merchant, merchantName);
+                    entityNBT.setInteger("totalTrades", entityNBT.getInteger("totalTrades") + 1);
+                }
             }
         }
     }
@@ -1750,8 +1755,11 @@ public class SteamcraftEventHandler {
         if (matcher.find()) {
             EntityPlayer messager = world.getPlayerEntityByName(matcher.group(0));
             if (messager != null) {
+                boolean playerHasShifter = playerHasFrequencyShifter(player);
+                boolean messagerHasShifter = playerHasFrequencyShifter(messager);
                 if (!messager.getDisplayName().equals(player.getDisplayName()) &&
-                  playerHasFrequencyShifter(messager) && playerHasFrequencyShifter(player)) {
+                  (playerHasShifter && !messagerHasShifter) ||
+                  (!playerHasShifter && messagerHasShifter)) {
                     event.setCanceled(true);
                 }
             }

@@ -72,7 +72,7 @@ public class Config {
     public static int brassChance;
     public static int gildedChance;
 
-    public static boolean enableAnchorAnvilRecipe;
+    public static boolean enableAnchorIronRecipe;
     public static int mortarRadius;
     public static boolean expensiveMusketRecipes;
     public static int chance;
@@ -325,7 +325,7 @@ public class Config {
         rebreatherConsumption = config.get("Exosuit", "The amount of steam the Rebreather consumes", REBREATHER_CONSUMPTION_DEFAULT).getInt();
         hydrophobicConsumption = config.get("Exosuit", "The amount of steam the Hydrophobic Coatings consume", HYDROPHOBIC_CONSUMPTION_DEFAULT).getInt();
         pyrophobicConsumption = config.get("Exosuit", "The amount of steam the Pyrophobic Coatings consume", PYROPHOBIC_CONSUMPTION_DEFAULT).getInt();
-        enableAnchorAnvilRecipe = config.get("Exosuit", "Use the leadless Anchor Heels recipe. This will always be true if there is no lead available.", false).getBoolean(false);
+        enableAnchorIronRecipe = config.get("Exosuit", "Use the leadless Anchor Heels recipe. This will always be true if there is no lead available.", false).getBoolean(false);
         pistonPushConsumption = config.get("Exosuit", "The amount of steam the Piston Push consumes", PISTON_PUSH_CONSUMPTION_DEFAULT).getInt();
         reloadingConsumption = config.get("Exosuit", "The amount of steam the Reloading Holsters consume", RELOADING_CONSUMPTION_DEFAULT).getInt();
         dragonRoarConsumption = config.get("Exosuit", "The amount of steam the Dragon Roar consumes", DRAGON_ROAR_CONSUMPTION_DEFAULT).getInt();
